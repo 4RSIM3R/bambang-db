@@ -3,6 +3,7 @@ use std::io::{self, Write};
 use figlet_rs::FIGfont;
 
 mod file;
+mod parser;
 
 fn main() {
     let font = FIGfont::standard().unwrap();
@@ -62,8 +63,16 @@ fn main() {
             "" => {
                 continue;
             }
-            _ => {
-                println!("Parse query: {}", input);
+            query => {
+                let result = parser::select::parse_select(query);
+                if result.is_err() {
+                    println!("{}", result.err().unwrap());
+                    continue;
+                }
+
+                let query = result.unwrap().1;
+
+                println!("{:#?}", query);
             }
         }
     }
