@@ -1,6 +1,7 @@
 use std::io::{self, Write};
 
 use figlet_rs::FIGfont;
+use file::Bambang;
 
 mod file;
 mod parser;
@@ -27,21 +28,21 @@ fn main() {
                 break;
             }
             _ if input.starts_with(".write") => {
-                let path = input.split(" ").nth(1);
-                if path.is_none() {
-                    println!("Invalid path");
-                    continue;
-                }
+                // let path = input.split(" ").nth(1);
+                // if path.is_none() {
+                //     println!("Invalid path");
+                //     continue;
+                // }
 
-                let path = path.unwrap();
+                // let path = path.unwrap();
 
-                let result = file::write_file(path);
-                if result.is_err() {
-                    println!("Failed to write to {}", path);
-                    continue;
-                }
+                // let result = file::write_file(path);
+                // if result.is_err() {
+                //     println!("Failed to write to {}", path);
+                //     continue;
+                // }
 
-                println!("Wrote to {}", path);
+                // println!("Wrote to {}", path);
             }
             _ if input.starts_with(".read") => {
                 let path = input.split(" ").nth(1);
@@ -51,14 +52,31 @@ fn main() {
                 }
 
                 let path = path.unwrap();
+                let result = Bambang::new(path);
 
-                let result = file::read_file(path);
                 if result.is_err() {
                     println!("Failed to read from {}", result.err().unwrap());
                     continue;
                 }
 
-                println!("Read from {}", path);
+                let mut bambang = result.unwrap();
+
+                let result = bambang.read_page(1);
+
+                if result.is_err() {
+                    println!("Failed to read page 1");
+                    continue;
+                }
+
+                println!("{:?}", String::from_utf8_lossy(&result.unwrap()));
+
+                // let result = file::read_file(path);
+                // if result.is_err() {
+                //     println!("Failed to read from {}", result.err().unwrap());
+                //     continue;
+                // }
+
+                // println!("Read from {}", path);
             }
             "" => {
                 continue;
